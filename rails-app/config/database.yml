@@ -7,14 +7,14 @@ development:
   <<: *default
   database: rails-app_development
   host: localhost
-  username: postgres
-  password: postgres
+  username: oktaexample
+  password: oktaexample
 
 test:
   <<: *default
   database: rails-app_test
-  username: postgres
-  password: postgres
+  username: oktaexample
+  password: oktaexample
 
 production:
   <<: *default

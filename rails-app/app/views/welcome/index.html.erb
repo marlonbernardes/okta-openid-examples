@@ -1,0 +1,12 @@
+
+<br><br>
+<h1 class="header center orange-text">Authentication Successful</h1>
+<div class="row center">
+  <h5 class="header col s12 light">Permissions:</h5>
+</div>
+<div class="row center">
+  <% session[:auth]['groups'].each do |g| %>
+    <a href="#" class="btn-large waves-effect waves-light orange"><%= g %></a>
+  <% end %>
+</div>
+<br><br>
