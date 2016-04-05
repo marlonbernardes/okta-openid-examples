@@ -1,0 +1,21 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  pool: 5
+
+development:
+  <<: *default
+  database: rails-api_development
+  host: localhost
+  username: oktaexample
+  password: oktaexample
+
+test:
+  <<: *default
+  database: rails-api_test
+  username: oktaexample
+  password: oktaexample
+
+production:
+  <<: *default
+  url: <%= ENV['DATABASE_URL'] %>
