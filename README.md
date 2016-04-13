@@ -7,11 +7,11 @@ I strongly suggest that you also check the example Python implementation (and do
 
 ### Getting started
 
-  - Adding a new application to Okta`
+  - Adding a new application to Okta
   - Configuring OpenID
   - Redirecting unauthenticated users to Okta
   - Handling successful authentication
-  - Validating ID Token (JWT)`
+  - Validating ID Token (JWT)
 
   #### Adding a new application to Okta
 
