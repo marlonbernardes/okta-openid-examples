@@ -17,11 +17,16 @@ I strongly suggest that you also check the example Python implementation (and do
 
   - Log in to your Okta account as an administrator.
   - Click on applications and then on "Add Application"
+  ![add application](https://cloud.githubusercontent.com/assets/2975955/14510101/1b94cb5e-01a6-11e6-8817-522285d7e5d3.png)
   - On the next screen, click on the big green button "Create new app"
+  ![create new app button](https://cloud.githubusercontent.com/assets/2975955/14510123/316d44a6-01a6-11e6-8760-3c823f11ebef.png)
   - Select "Single Page App (SPA)" as the platform and make sure that Single on method is set to "OpenID Connect" (right now this is the only option available for Single Page Apps)
+  ![setting the sign on method](https://cloud.githubusercontent.com/assets/2975955/14510136/4623ef30-01a6-11e6-92ee-240f702bee41.png)
   - Click on create.
   - Configure your application name/logo
+  ![general settings](https://cloud.githubusercontent.com/assets/2975955/14510157/5c289970-01a6-11e6-8946-8920ca237bcb.png)
   - Configure one or more "Redirect URIs" for your application. This is a whitelist of endpoints that Okta trust and represents where Okta can send the ID Token after a successful authentication.  
+  ![open id](https://cloud.githubusercontent.com/assets/2975955/14510523/540a3ada-01a8-11e6-9406-d70792a275e3.png)
   - Click on "Finish"
   - Using the "People" or "Groups" tabs, assign people to your newly created application. Note: Users will not be able to authenticate to your application if they are not assigned!
   - Take note of your "Client ID" in the "General" tab. You will need it later.
@@ -66,6 +71,7 @@ before_filter :authenticate
 ```
 
 Python example: [click here](https://github.com/jpf/okta-oidc-beta/blob/master/app.py#L178-185)
+
 #### 1.3 Handling successful authentication
 
 TBD
