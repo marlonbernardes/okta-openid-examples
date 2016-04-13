@@ -1,7 +1,7 @@
 class EventsApiController < ApiController
 
   def index
-    render json: Event.all
+    render json: user_events
   end
 
   def create
@@ -9,9 +9,14 @@ class EventsApiController < ApiController
     evt.title = params[:title]
     evt.start = params[:start]
     evt.end = params[:end]
-    evt.type = params[:type]
+    evt.group = params[:group]
     evt.save
-    render json: Event.all
+    render json: user_events
+  end
+
+  def user_events
+    user_groups = session[:user_groups]
+    Event.all.select {|evt| evt.group.blank? || user_groups.include?(evt.group) }
   end
 
 end

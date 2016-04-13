@@ -8,6 +8,7 @@ class ApiController < ActionController::Base
       token = header.gsub('Bearer ', '') if header
       begin
         result = parse_openid_token? token
+        session[:user_groups] = result.first['groups']
       rescue Exception => e
         render json: { message: e.message }, status: 401
       end
