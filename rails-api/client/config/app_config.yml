@@ -1,0 +1,16 @@
+defaults: &defaults
+  okta_base_url: https://mycompany.oktapreview.com
+  okta_openid_redirect_uri: https://oidc-example-rails-api-client.herokuapp.com/oauth/callback
+  okta_client_id:
+  okta_username: 
+  okta_password:
+
+development:
+  <<: *defaults
+  okta_openid_redirect_uri: http://localhost:3000/oauth/callback
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults
