@@ -9,9 +9,8 @@ I strongly suggest that you also check the example Python implementation (and do
 
   - 1.1 Adding a new application to Okta & configuring OpenID
   - 1.2 Redirecting unauthenticated users to Okta
-  - 1.3 Handling successful authentication
-  - 1.4 Validating the ID Token (JWT)
-  - 1.5 Obtaining user groups (permissions) from Okta
+  - 1.3 Validating the ID Token (JWT)
+  - 1.4 Obtaining user groups (permissions) from Okta
 
 #### 1.1 Adding a new application to Okta & configuring OpenID
 
@@ -72,15 +71,34 @@ before_filter :authenticate
 
 Python example: [click here](https://github.com/jpf/okta-oidc-beta/blob/master/app.py#L178-185)
 
-#### 1.3 Handling successful authentication
+#### 1.3 Validating the ID Token (JWT)
 
-TBD
+After a successful authentication Okta will generate an ID Token (which is a JSON Web Token - JWT). This token contains authentication information (e.g: user id, email (optional - depends on scope attribute), expiration date, groups (optional - depends on scope attribute and okta configuration), etc).
 
-#### 1.4 Validating the ID Token (JWT)
+An ID token looks something like this:
 
-TBD
+```
+eyJhbGciOiJSUzI1NiIsImtpZCI6Im1MaTFVZFhDa205MEtscTlaSnk1cDZyQVp4NV9YMkdRZ
+WUyRV9MajNlVXMifQ.eyJzdWIiOiIwMGExYjMzY2RlNGZINWlqNjBrNyIsImVtYWlsIjoibXl
+1c2VyQG15Y29tcGFueS5jb20iLCJ2ZXIiOjEsImlzcyI6Imh0dHBzOi8vbXljb21wYW55Lm9r
+dGFwcmV2aWV3LmNvbSIsImF1ZCI6ImtkOGE3N0hMRG1hc1NUIiwiaWF0IjoxNDU5NDUwMjg0L
+CJleHAiOjE0NTk0NTM4ODQsImp0aSI6ImpHYmJuVENid1dxc0dfT0s1M1RSIiwiYW1yIjpbIn
+B3ZCJdLCJpZHAiOiIwMG8xZWlnOHlBQkNERUZHSElKS0wiLCJ1cGRhdGVkX2F0IjowLCJlbWF
+pbF92ZXJpZmllZCI6dHJ1ZSwiYXV0aF90aW1lIjoxNDU5NDUwMjg0LCJncm91cHMiOlsiRXZl
+cnlvbmUiLCJjdXN0b20tdXNlci1ncm91cCIsImFub3RoZXItdXNlci1ncm91cCJdfQ==.Zp8a
+6o0nLEw_pEJEAgNgcT9CCvjizqBmGmvO-fjzEOmo1lqoUiBkRCZxTKW43vhInQ8pxa3Ms7G95
+GwT_TjDZZuexPPsGRewMNZXJCiUm6bD7NEMzRqrWzsPhP6p-vcbPm4NCyXqu63CpLGODSeFtJ
+An-khTOTcmQBKqNqZveoD0IgJWP_my4_PDjsFMRFHbeiccRfBHHdgAoTGvu1jWul7Bz25QCzh
+6PMdXPpWJgbPZ1DUoXef2m_a71IGsjn_RLKB0u5UKmvlKPvAxf3U48w257pRF7Gx-g6za_E9A
+gY703cd1MJjDFRL4DQPPo6yhLWWs7UCyG2o9SORJc4Qoig
+```
 
-#### 1.5 Obtaining user groups (permissions) from Okta
+After receiving an ID Token you need to decode it and validate it. Validating the token is **really** important, as you need to make sure that this token was not manipulated in any way by a malicious user.
+
+There are several libraries for decoding and validating JWT. You can find a list of those libraries here: [https://jwt.io/](https://jwt.io/).
+
+
+#### 1.4 Obtaining user groups (permissions) from Okta
 
 TBD
 
