@@ -93,9 +93,53 @@ An-khTOTcmQBKqNqZveoD0IgJWP_my4_PDjsFMRFHbeiccRfBHHdgAoTGvu1jWul7Bz25QCzh
 gY703cd1MJjDFRL4DQPPo6yhLWWs7UCyG2o9SORJc4Qoig
 ```
 
+This token is basically a base 64 encoded string, divided in 3 parts (separated by dots): the **header**, the **payload** and the **signature**. As an example, the token above contain the following contents:
+
+**Header**
+```js
+{
+  "alg": "RS256",
+  "kid": "mLi1UdXCkm90Klq9ZJy5p6rAZx5_X2GQee2E_Lj3eUs"
+}
+```
+
+**Payload**
+```js
+{
+  "sub": "00a1b33cde4fH5ij60k7",
+  "email": "myuser@mycompany.com",
+  "ver": 1,
+  "iss": "https://mycompany.oktapreview.com",
+  "aud": "kd8a77HLDmasST",
+  "iat": 1459450284,
+  "exp": 1459453884,
+  "jti": "jGbbnTCbwWqsG_OK53TR",
+  "amr": [
+    "pwd"
+  ],
+  "idp": "00o1eig8yABCDEFGHIJKL",
+  "updated_at": 0,
+  "email_verified": true,
+  "auth_time": 1459450284,
+  "groups": [
+    "Everyone",
+    "custom-user-group",
+    "another-user-group"
+  ]
+}
+```
+
 After receiving an ID Token you need to decode it and validate it. Validating the token is **really** important, as you need to make sure that this token was not manipulated in any way by a malicious user.
 
 There are several libraries for decoding and validating JWT. You can find a list of those libraries here: [https://jwt.io/](https://jwt.io/).
+
+In short, the process of validating the token works like this:
+
+  1. Decode the token 
+  2. Extract the key id from the token's header ("kid" attribute)
+  3. Obtain the public key associated with this key id.
+  4. Use the public key to validate the contents of this id token
+  5. Optionally (**recommended!**) validate the issuer against a whitelist of allowed domains (e.g: validate if the "iss" domain is `okta.com` or `oktapreview.com`.
 
 
 #### 1.4 Obtaining user groups (permissions) from Okta
