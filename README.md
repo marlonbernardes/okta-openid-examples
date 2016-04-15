@@ -59,7 +59,7 @@ before_filter :authenticate
        # you want to obtain (in an easy way) the users's email and
        # permissions. Please note that if you want to obtain the users'
        # groups you also need to configure what groups Okta should send
-       # back to your app. (see step 1.5)
+       # back to your app. (see step 1.4)
        scope: 'openid email groups'
      }.to_query
 
