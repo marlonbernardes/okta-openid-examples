@@ -175,17 +175,84 @@ Another example, in Ruby:
   end
 ```
 
+After validating the token, you can then create a session in your application for the user using the token information. 
+
+An example in Python (again, extracted from https://github.com/jpf/okta-oidc-beta/blob/master/app.py#L219-L229)
+
+```python
+@app.route("/sso/oidc", methods=['GET', 'POST'])
+def sso_oidc():
+    if 'error' in request.form:
+        flash(request.form['error_description'])
+        return redirect(url_for('main_page', _external=True, _scheme='https'))
+    id_token = request.form['id_token']
+    decoded = parse_jwt(id_token)
+    user_id = decoded['sub']
+    user = UserSession(user_id)
+    login_user(user)
+    return redirect(url_for('logged_in', _external=True, _scheme='https'))
+```
+
+In ruby:
+
+```ruby
+ def create
+    begin
+      # you can find the implementation of parse_jwt_token above
+      token = parse_jwt_token? params['id_token']
+      # if the parse_jwt_token didn't throw an exception, we can safely create a session for the user
+      session[:auth] = {
+        email: token.first['email'],
+        groups: token.first['groups']
+      }
+      redirect_to '/'
+    rescue Exception => e
+      redirect_to '/401'
+    end
+  end
+```
+
 (link to the source code: https://github.com/marlonbernardes/okta-openid-examples/blob/master/rails-app/app/controllers/sessions_controller.rb)
-
-
-
-
 
 
 #### 1.4 Obtaining user groups (permissions) from Okta
 
-TBD
+First you need to specify that the id token should contain the user groups:
 
+```ruby
+ params = {
+  # tell okta that you want to retrieve the users' groups 
+  scope: 'openid email groups'
+  # other params ommited for brevity
+ }.to_query
+ 
+ redirect_to "https://mycompany.oktapreview.com/oauth2/v1/authorize?#{params}"
+```
+
+Configure which groups Okta should return after a successful authentication. To do so:
+
+  1. Log in to your Okta account as an administrator
+  2. Find your application name in the "Applications" page and open it
+  3. Open the "general" tab and then click on "Edit" in the "OAuth 2.0 Settings" pane.
+  
+  ![editing oauth 2.0 settings](https://cloud.githubusercontent.com/assets/2975955/14547869/41e8a310-0288-11e6-9513-b44428000767.png)
+
+  4. Configure which groups should be returned. In the example below, I configured a regex that matches all groups (`.*`).
+  
+  ![configuring groups](https://cloud.githubusercontent.com/assets/2975955/14547836/09353b64-0288-11e6-89f0-401814f3ffa5.png)
+
+  5. In order to test it, generate a new id token, decode it (tip: https://jwt.io) and verify that it contains the users' groups:
+  
+  ```js
+    // other attributes ommited for brevity
+    "groups": [
+      "Everyone",
+      "custom-user-group",
+      "another-user-group"
+    ]
+  ````
+ 
+ 
 ### 2.1 Example 1: Using OpenID with browser based authentication
 
 The source code for this demo is available inside the folder `rails-app`.
