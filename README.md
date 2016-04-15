@@ -261,9 +261,89 @@ The source code for this demo is available inside the folder `rails-app`.
 ### 2.2 Example 2: Machine-to-machine authentication
 
 This example shows how to authenticate with Okta without using a browser.
-
 The source code for this demo is available inside the folder `rails-api`.
 
+To authenticate without requiring human interaction:
+  
+  1. Use okta's authentication API ([documentation](http://developer.okta.com/docs/api/resources/authn.html)) to authenticate (**hint**: administrators can disable multi-factor authentication which will make things easier (less requests to authenticate))
+  2. After a successful authentication, you will receive a response like this:
+  
+```js
+{
+  "expiresAt": "2015-11-03T10:15:57.000Z",
+  "status": "SUCCESS",
+  "relayState": "/myapp/some/deep/link/i/want/to/return/to",
+  "sessionToken": "00Fpzf4en68pCXTsMjcX8JPMctzN2Wiw4LDOBL_9pe",
+  "_embedded": {
+    "user": {
+      "id": "00ub0oNGTSWTBKOLGLNR",
+      "passwordChanged": "2015-09-08T20:14:45.000Z",
+      "profile": {
+        "login": "dade.murphy@example.com",
+        "firstName": "Dade",
+        "lastName": "Murphy",
+        "locale": "en_US",
+        "timeZone": "America/Los_Angeles"
+      }
+    }
+  }
+}
+```
+
+  3. Exchange the sessionToken (see JSON above) for an id token using the `authorize` endpoint:
+  
+**Client**
+```ruby
+# See https://github.com/marlonbernardes/okta-openid-examples/blob/master/rails-api/client/app/controllers/auth_controller.rb
+# pseudo code
+
+session_token = authenticate_using_okta_authentication_api
+params = {
+   # Remember the Redirect URI on step 1.1? Add one of those URLs here
+   redirect_uri: APP_CONFIG['okta_openid_redirect_uri'],
+   # Client ID obtained after adding a new application in Okta
+   client_id: APP_CONFIG['okta_client_id'],
+   response_type: 'id_token',
+   # IMPORTANT: since we might not have a browser (remember: we are talking about machine-to-machine authentication) 
+   # then it makes no sense to user 'form_post' as response_mode. That's why we are telling Okta to send the token
+   # as an URL fragment
+   response_mode: 'fragment',
+   scope: 'openid email groups',
+   # when we include the sessionToken as a parameter, Okta will validate it and assume we already authenticated - 
+   # thus it will generate an id token without showing the login form
+   sessionToken: session_token
+ }.to_query
+
+ # performs a GET request passing the parameters above
+ response = get "#{APP_CONFIG['okta_base_url']}/oauth2/v1/authorize?#{params}"
+ 
+ # extract the id token from the URL fragment contained inside the location header
+ id_token = extract_id_token_from_location_response_header(response)
+ 
+ # the creators of mycoolapp's API decided that we can send an ID TOKEN as part of the Authorization header.
+ # It's up to then to decode this token and validate it
+ auth_headers = { "Authorization": "Bearer #{id_token}" }
+ bla = get 'https://mycoolapp/api/foo/protected/endpoint/bla.json, { headers: auth_headers }
+
+```
+
+**Server**:
+
+```ruby
+ def authenticate
+    if request.method != 'OPTIONS'
+      header = request.headers['Authorization']
+      token = header.gsub('Bearer ', '') if header
+      begin
+        result = validate_id_token? token
+        session[:user_groups] = result.first['groups']
+      rescue Exception => e
+        render json: { message: e.message }, status: 401
+      end
+    end
+  end
+
+```
 
 ## References
 
