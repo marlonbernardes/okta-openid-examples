@@ -138,8 +138,48 @@ In short, the process of validating the token works like this:
   1. Decode the token 
   2. Extract the key id from the token's header ("kid" attribute)
   3. Obtain the public key associated with this key id.
-  4. Use the public key to validate the contents of this id token
-  5. Optionally (**recommended!**) validate the issuer against a whitelist of allowed domains (e.g: validate if the "iss" domain is `okta.com` or `oktapreview.com`.
+  4. Use the public key to validate the contents of this id token (don't do this manually - use a library!)
+  5. Optionally (**recommended!**) validate the issuer against a whitelist of allowed domains (e.g: validate if the "iss" domain is `okta.com` or `oktapreview.com`).
+  
+To obtain the public key:
+
+  1. Open https://mycompany.oktapreview.com/.well-known/openid-configuration
+  2. Find the URL present in the attribute `jwks_uri`
+  3. Open this URL (e.g: https://mycompany.oktapreview.com/oauth2/v1/keys) and find the x5c certificate associated with the key id you want to validate
+  
+  
+You can see how this is done in python here: [https://github.com/jpf/okta-oidc-beta/blob/master/app.py#L110-L147](https://github.com/jpf/okta-oidc-beta/blob/master/app.py#L110-L147)
+
+Another example, in Ruby:
+
+```ruby
+ private
+  def parse_jwt_token? token
+    # decode the token without validating it (to extract the key id)
+    dirty_token = JWT.decode token, nil, false
+    dirty_header = dirty_token.last
+    
+    # Instead of accesing https://mycompany.oktapreview.com/.well-known/openid-configuration
+    # and then https://mycompany.oktapreview.com/oauth2/v1/keys, I did this manually (using the browser) 
+    # and added my X5C certificate to my configuration file. 
+    
+    # Decoding the x5c certificate data
+    raw_certificate = Base64.decode64(APP_CONFIG['okta_public_keys'][dirty_header['kid']])
+    
+    # Using the certificate data to create a X5C certificate object
+    certificate = OpenSSL::X509::Certificate.new raw_certificate
+    
+    # Validate the token using the public key from the certificate
+    token = JWT.decode token, certificate.public_key, true, { algorithm: 'RS256' }
+    token
+  end
+```
+
+(link to the source code: https://github.com/marlonbernardes/okta-openid-examples/blob/master/rails-app/app/controllers/sessions_controller.rb)
+
+
+
+
 
 
 #### 1.4 Obtaining user groups (permissions) from Okta
