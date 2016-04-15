@@ -268,27 +268,27 @@ To authenticate without requiring human interaction:
   1. Use okta's authentication API ([documentation](http://developer.okta.com/docs/api/resources/authn.html)) to authenticate (**hint**: administrators can disable multi-factor authentication which will make things easier (less requests to authenticate))
   2. After a successful authentication, you will receive a response like this:
   
-```js
-{
-  "expiresAt": "2015-11-03T10:15:57.000Z",
-  "status": "SUCCESS",
-  "relayState": "/myapp/some/deep/link/i/want/to/return/to",
-  "sessionToken": "00Fpzf4en68pCXTsMjcX8JPMctzN2Wiw4LDOBL_9pe",
-  "_embedded": {
-    "user": {
-      "id": "00ub0oNGTSWTBKOLGLNR",
-      "passwordChanged": "2015-09-08T20:14:45.000Z",
-      "profile": {
-        "login": "dade.murphy@example.com",
-        "firstName": "Dade",
-        "lastName": "Murphy",
-        "locale": "en_US",
-        "timeZone": "America/Los_Angeles"
+  ```js
+  {
+    "expiresAt": "2015-11-03T10:15:57.000Z",
+    "status": "SUCCESS",
+    "relayState": "/myapp/some/deep/link/i/want/to/return/to",
+    "sessionToken": "00Fpzf4en68pCXTsMjcX8JPMctzN2Wiw4LDOBL_9pe",
+    "_embedded": {
+      "user": {
+        "id": "00ub0oNGTSWTBKOLGLNR",
+        "passwordChanged": "2015-09-08T20:14:45.000Z",
+        "profile": {
+          "login": "dade.murphy@example.com",
+          "firstName": "Dade",
+          "lastName": "Murphy",
+          "locale": "en_US",
+          "timeZone": "America/Los_Angeles"
+        }
       }
     }
   }
-}
-```
+  ```
 
   3. Exchange the sessionToken (see JSON above) for an id token using the `authorize` endpoint:
   
