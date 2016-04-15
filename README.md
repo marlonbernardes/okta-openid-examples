@@ -330,6 +330,7 @@ params = {
 **Server**:
 
 ```ruby
+ # See https://github.com/marlonbernardes/okta-openid-examples/blob/master/rails-api/api/app/controllers/api_controller.rb
  def authenticate
     if request.method != 'OPTIONS'
       header = request.headers['Authorization']
